@@ -6,7 +6,7 @@ metadata:
     component: elasticsearch
     role: client
 spec:
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -15,13 +15,13 @@ spec:
     spec:
       containers:
       - name: es-client
-        securityContext:
-          privileged: true
-          capabilities:
-            add:
-              - IPC_LOCK
+        # securityContext:
+        #   privileged: true
+        #   capabilities:
+        #     add:
+        #       - IPC_LOCK
         image: kayrus/docker-elasticsearch-kubernetes:2.4.0
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         env:
         - name: NAMESPACE
           valueFrom:

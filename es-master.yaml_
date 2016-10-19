@@ -20,7 +20,7 @@ spec:
             add:
               - IPC_LOCK
         image: kayrus/docker-elasticsearch-kubernetes:2.4.0
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         env:
         - name: NAMESPACE
           valueFrom:

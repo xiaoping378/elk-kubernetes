@@ -22,13 +22,13 @@ spec:
     spec:
       containers:
       - name: es-data-master
-        securityContext:
-          privileged: true
-          capabilities:
-            add:
-              - IPC_LOCK
+        # securityContext:
+        #   privileged: true
+        #   capabilities:
+        #     add:
+        #       - IPC_LOCK
         image: kayrus/docker-elasticsearch-kubernetes:2.4.0
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         #readinessProbe:
         #  exec:
         #    command:

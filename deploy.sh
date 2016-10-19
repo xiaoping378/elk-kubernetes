@@ -20,6 +20,7 @@ CONTEXT=""
 NAMESPACE="monitoring"
 
 ES_DATA_REPLICAS=$(kubectl get nodes --no-headers ${CONTEXT} | awk '!/SchedulingDisabled/ {print $1}' | wc -l)
+ES_DATA_REPLICAS=1
 
 for yaml in *.yaml.tmpl; do
   render_template "${yaml}" | kubectl ${CONTEXT} --namespace="${NAMESPACE}" create -f -
@@ -46,11 +47,14 @@ echo
 
 # Wait for Elasticsearch cluster readiness, and then apply "readinessProbe" to allow smooth rolling upgrade
 echo -n "Waiting for Elasticsearch cluster readiness"
-while true; do
-  echo -n .
-  kubectl ${CONTEXT} --namespace="${NAMESPACE}" exec $(kubectl ${CONTEXT} --namespace="${NAMESPACE}" get pods -l role=client,component=elasticsearch -o jsonpath={.items[0].metadata.name}) -- sh -c 'curl -so/dev/null http://elasticsearch-logging:9200/_cluster/health?wait_for_status=green' >/dev/null 2>&1 && break || sleep 1
-done
-echo
+# while true; do
+#   echo -n .
+#   kubectl ${CONTEXT} --namespace="${NAMESPACE}" exec $(kubectl ${CONTEXT} --namespace="${NAMESPACE}" get pods -l role=client,component=elasticsearch -o jsonpath="{.items[0].metadata.name}") -- sh -c 'curl -so/dev/null http://elasticsearch-logging:9200/_cluster/health?wait_for_status=green' >/dev/null 2>&1 && break || sleep 1
+# done
+# echo
+
+#xxpDebug without curl.
+sleep 5
 
 # Apply readinessProbe only when our Elasticsearch cluster is up and running
 kubectl ${CONTEXT} --namespace="${NAMESPACE}" patch deployment es-data-master -p'{"spec":{"template":{"spec":{"containers":[{"name":"es-data-master","readinessProbe":{"exec":{"command":["curl","-so/dev/null","http://elasticsearch-logging:9200/_cluster/health?wait_for_status=green"]},"timeoutSeconds":30,"successThreshold":3}}]}}}}'

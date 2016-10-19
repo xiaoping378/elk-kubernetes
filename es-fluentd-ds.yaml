@@ -14,7 +14,7 @@ spec:
       containers:
       - name: fluentd-elasticsearch
         image: kayrus/fluentd-elasticsearch:1.20
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         # suppress "info" log level
         args:
           - -q
